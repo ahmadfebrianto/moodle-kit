@@ -6,19 +6,18 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class Moodle:
 
-    __headers = {
+    request_headers = {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0',
         'Cookie': ''
     }
-   
+
+    response = None
     __logintoken = None
     __moodle_session = None
-
 
     def __init__(self) -> None:
         pass
 
-    
     def __get_logintoken(self, string):
         try:
             regex = r'name="logintoken".*value="(\w+)"'
@@ -28,24 +27,24 @@ class Moodle:
             print("[!] Logintoken not found.")
             exit()
 
-
     def login(self, url, username, password):
-        response = requests.get(
+        self.response = requests.get(
             url,
             allow_redirects=True
         )
 
-        if response.ok:
-            self.__logintoken = self.__get_logintoken(response.text)
-            self.__moodle_session = response.cookies.get('MoodleSession')
-            self.__headers['Cookie'] = "MoodleSession=" + self.__moodle_session
+        if self.response.ok:
+            self.__logintoken = self.__get_logintoken(self.response.text)
+            self.__moodle_session = self.response.cookies.get('MoodleSession')
+            self.request_headers['Cookie'] = "MoodleSession=" + \
+                self.__moodle_session
         else:
             print("[!] Couldn't reach the website.")
             exit()
 
-        response = requests.post(
+        self.response = requests.post(
             url,
-            headers=self.__headers,
+            headers=self.request_headers,
             data={
                 'anchor': '',
                 'logintoken': self.__logintoken,
@@ -55,13 +54,13 @@ class Moodle:
             allow_redirects=True
         )
 
-        new_moodle_session = response.request.headers.get('Cookie').split('=')[1]
-        self.__headers['Cookie'] = 'MoodleSession=' + new_moodle_session
-        return response
+        new_moodle_session = self.response.request.headers.get('Cookie').split('=')[
+            1]
+        self.request_headers['Cookie'] = 'MoodleSession=' + new_moodle_session
+        return self.response
 
-    
-    def logout(sself):
-        pass
-
-
-
+    def logout(self):
+        regex = r'href="(.*logout.php\?sesskey=\w+)"\s?'
+        logout_url = search(regex, self.response.text).groups()[0]
+        self.response = requests.get(logout_url, headers=self.request_headers)
+        return self.response
