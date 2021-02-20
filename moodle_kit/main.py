@@ -1,6 +1,6 @@
+from re import search
 import requests
 import urllib3
-import re
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
@@ -8,11 +8,7 @@ class Moodle:
 
     __headers = {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate',
-        'DNT': '1',
-        'Connection': 'close',
+        'Cookie': ''
     }
    
     __logintoken = None
@@ -26,7 +22,7 @@ class Moodle:
     def __get_logintoken(self, string):
         try:
             regex = r'name="logintoken".*value="(\w+)"'
-            logintoken = re.search(regex, string).groups()[0]
+            logintoken = search(regex, string).groups()[0]
             return logintoken
         except Exception:
             print("[!] Logintoken not found.")
@@ -36,7 +32,6 @@ class Moodle:
     def login(self, url, username, password):
         response = requests.get(
             url,
-            headers=self.__headers,
             allow_redirects=True
         )
 
@@ -60,6 +55,13 @@ class Moodle:
             allow_redirects=True
         )
 
+        new_moodle_session = response.request.headers.get('Cookie').split('=')[1]
+        self.__headers['Cookie'] = 'MoodleSession=' + new_moodle_session
         return response
+
+    
+    def logout(sself):
+        pass
+
 
 
