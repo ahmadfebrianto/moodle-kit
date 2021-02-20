@@ -1,4 +1,4 @@
-from re import search
+from re import search as re_search
 import requests
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -21,7 +21,7 @@ class Moodle:
     def __get_logintoken(self, string):
         try:
             regex = r'name="logintoken".*value="(\w+)"'
-            logintoken = search(regex, string).groups()[0]
+            logintoken = re_search(regex, string).groups()[0]
             return logintoken
         except Exception:
             print("[!] Logintoken not found.")
@@ -61,6 +61,12 @@ class Moodle:
 
     def logout(self):
         regex = r'href="(.*logout.php\?sesskey=\w+)"\s?'
-        logout_url = search(regex, self.response.text).groups()[0]
+        logout_url = re_search(regex, self.response.text).groups()[0]
         self.response = requests.get(logout_url, headers=self.request_headers)
         return self.response
+
+    @property
+    def title(self):
+        regex = r'<title>(.*)</title>'
+        page_title = re_search(regex, self.response.text).groups()[0]
+        return page_title
