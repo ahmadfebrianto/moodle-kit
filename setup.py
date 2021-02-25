@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 from os import path
 
 
@@ -9,7 +9,7 @@ with open(path.join(base_dir, 'README.md'), encoding='utf-8') as f:
 setup(
     name='moodle-kit',
     packages=['moodle_kit'],
-    version='0.1.4', 
+    version='0.1.7', 
     license='GNU General Public License v3.0',
     description='A simple Python package with some functionalities to interact with moodle-based LMS.',
     long_description=readme,
@@ -17,7 +17,7 @@ setup(
     author='Ahmad Febrianto',
     author_email='achmadfebryanto@gmail.com',
     url='https://github.com/ahmadfebrianto/moodle-kit',
-    download_url='https://github.com/ahmadfebrianto/moodle-kit/archive/v0.1.4.tar.gz',
+    download_url='https://github.com/ahmadfebrianto/moodle-kit/archive/v0.1.7.tar.gz',
     keywords=['moodle'],
     install_requires=[
         'requests',
