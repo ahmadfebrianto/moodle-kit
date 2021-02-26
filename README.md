@@ -35,18 +35,22 @@ password = 'your_password'
 
 moodle.login(login_url, username, password)
 
-# The response object is automatically saved in moodle.response property. 
+# The response object is automatically saved in moodle.response property.So you can check the status code this way.
 print(moodle.response.status_code)
 
-# However, you can also assign a varible to it.
+# To verify if login is successful, you can print the page title.
+print(moodle.title)
+
+# On the other hand, you can also assign a varible to it.
 response = moodle.login(login_url, username, password)
-print(moodle.response.status_code)
+print(response.status_code)
 ```
 
 * Logout
 ```python
 moodle.logout()
 
-# After logging out, the moodle.response property is updated. So, you can verify if it's successful or not by printing the url.
+# After logging out, the moodle.response property is updated. 
+# So, you can verify if it's successful or not by printing the url.
 print(moodle.response.url)
 ```
